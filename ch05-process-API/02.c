@@ -26,6 +26,16 @@ Task: Write a program that opens a file (with the open() system call)
 
 int main(int argc, char *argv[])
 {
+    int i = 0;
+    // Per the book, close stdout. Idk if we need to do this unless I want
+    // to reassign stdout to 02.output's FD. Can't I just fprintf?
+    // Answer: nope! Per the printf man pages, I need to use dprintf()
+    close(STDOUT_FILENO);
+    // Open a new stream
+    int fd = open("./02.output", O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+    dprintf(fd, "hello from fd!\n");
+    printf("Hello from printf %d!\n", ++i);
+
     int rc = fork();
     // On a fork, the PID of the child is returned to the parent,
     // and `0` is returned in the child.
