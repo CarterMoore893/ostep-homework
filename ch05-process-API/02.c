@@ -26,29 +26,34 @@ Task: Write a program that opens a file (with the open() system call)
 
 int main(int argc, char *argv[])
 {
-    int i = 0;
     // Per the book, close stdout. Idk if we need to do this unless I want
     // to reassign stdout to 02.output's FD. Can't I just fprintf?
     // Answer: nope! Per the printf man pages, I need to use dprintf()
-    close(STDOUT_FILENO);
+    //close(STDOUT_FILENO);
+
     // Open a new stream
-    int fd = open("./02.output", O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
-    dprintf(fd, "hello from fd!\n");
-    printf("Hello from printf %d!\n", ++i);
+    int fd = open("./02.txt", O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+    dprintf(fd, "Hello from pre-fork!\n");
 
     int rc = fork();
+    dprintf(fd, "Hello from post-fork! I am %d\n", getpid());
     // On a fork, the PID of the child is returned to the parent,
     // and `0` is returned in the child.
     // On failure, -1 is returned in the parent and no child is created.
-
     if (rc == -1) {
         fprintf(stderr, "(EE) %d fork failed\n", getpid());
         exit(EXIT_FAILURE);
     } else if (rc == 0) {
         // Child process executes here
+        dprintf(fd, "Child %d->%d says hello!\n", getppid(), getpid());
     } else {
         // Parent execution
+        dprintf(fd, "Parent %d says hello!\n", getpid());
     }  
 
     return EXIT_SUCCESS;
 }
+/* Answers:
+   Yes, both the child and parent can access the fd.
+   When each process attempts to write to the fd, the scheduler just picks one
+*/

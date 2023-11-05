@@ -1,0 +1,5 @@
+Hello from pre-fork!
+Hello from post-fork! I am 10961
+Parent 10961 says hello!
+Hello from post-fork! I am 10962
+Child 1->10962 says hello!
