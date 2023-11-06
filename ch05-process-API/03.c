@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     } else if (rc == 0) {
         // Child process executes here
+        scanf("What do you want to say?");
         printf("Child %d->%d says hello!\n", getppid(), getpid());
     } else {
         // Parent execution
@@ -36,4 +37,10 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 /* Answers:
+   If I run this code without `scanf`, the child almost always exits first, 
+   printing out its pid and ppid accordingly.
+   Using scanf, I can delay the `print` statement of the child until after
+   the parent process terminates
+   The program behaves similarly to the python simulation the ppid of an
+   "orphaned" child is 1: the `init` process
 */
