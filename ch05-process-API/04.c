@@ -17,6 +17,10 @@ you think there are so many variants of the same basic call?*/
 int main(int argc, char *argv[])
 {
     // execl
+    /* execl is expecting an arbitrarily long **list** of null-terminated
+       strings. the end of the list is delimited by a `(char*) NULL`.
+       This form of exec, and all functions without `p` must have the absolute
+       path to the executable file defined*/
     printf("(%d) Parent started\n", getpid());
     int rc = fork();
     if (rc == -1) {
@@ -28,13 +32,15 @@ int main(int argc, char *argv[])
         my_args[0] = "/bin/ls";
         my_args[1] = "-l";
         printf("(%d) execl\n", getpid());
-        execl(my_args[0], my_args[1], NULL);
+        execl(my_args[0], my_args[1], (char*) NULL);
         // Nothing beyond this line will execute for this Child
         printf("I will not execute!\n");
     }
     wait(&rc);
 
     // execlp
+    /* execlp is also a list, but `p` will automatically search PATH for the 
+       executable*/
     rc = fork();
     if (rc == -1) {
         fprintf(stderr, "(EE) %d fork failed\n", getpid());
@@ -50,6 +56,8 @@ int main(int argc, char *argv[])
     wait(&rc);
 
     // execle
+    /* execle functions as a list, but `e` allows us to define environment
+       variables independent of what has been passed into the program */
     rc = fork();
     if (rc == -1) {
         fprintf(stderr, "(EE) %d fork failed\n", getpid());
@@ -67,6 +75,8 @@ int main(int argc, char *argv[])
     wait(&rc);
 
     // execv
+    /* All `v` functions expect a char* **vector** of variables. This function
+       of course expects a particular number of variables to be passed in*/
     rc = fork();
     if (rc == -1) {
         fprintf(stderr, "(EE) %d fork failed\n", getpid());
@@ -115,4 +125,9 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 /* Answers:
+   I believe that there are so many variants of the exec() call for ease of use.
+   Some exec functions expect lists, some expect vectors.
+   From there, the remaining settings seem to focus on specificity and optional
+   tweaks such as searching the PATH and configuring custom environment 
+   variables.
 */
